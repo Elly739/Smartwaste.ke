@@ -710,6 +710,8 @@
   border: 1px solid #bbf7d0;
   text-align: left;
   animation: slideUp 400ms ease both;
+  display: grid;
+  gap: 16px;
 }
 
 @keyframes slideUp {
@@ -726,6 +728,18 @@
 .result-panel h3 {
   margin: 0 0 12px;
   font-size: 1.75rem;
+}
+
+.result-media {
+  min-height: 180px;
+  border-radius: 18px;
+  border: 1px solid rgba(84, 103, 48, 0.12);
+  overflow: hidden;
+}
+
+.result-copy {
+  display: grid;
+  gap: 8px;
 }
 
 .stats-grid,
@@ -1143,50 +1157,69 @@
 }
 
 /* Step-by-step guide styling */
-.guide-steps {
+.guide-story-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  padding: 16px 20px;
-  background: #ffffff;
+  gap: 16px;
+  padding: 18px 20px 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,255,251,0.96) 100%);
 }
 
-.guide-step {
+.guide-story-card {
+  display: grid;
+  grid-template-rows: auto 160px;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(14, 59, 46, 0.08);
+  box-shadow: 0 10px 24px rgba(72, 86, 35, 0.05);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.guide-story-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(84, 103, 48, 0.16);
+  box-shadow: 0 18px 28px rgba(72, 86, 35, 0.1);
+}
+
+.guide-story-copy {
   display: grid;
   gap: 8px;
-  padding: 12px;
-  border-radius: 14px;
-  background: #f9fffc;
-  border: 1px solid rgba(14, 59, 46, 0.06);
-  text-align: center;
-  transition: all 240ms ease;
+  align-content: start;
 }
 
-.guide-step:hover {
-  border-color: rgba(14, 59, 46, 0.16);
-  background: #f3fbf7;
-  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.06);
-  transform: translateY(-2px);
+.guide-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4f6f3f, #8baa64);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
 }
 
-.step-icon {
-  font-size: 1.8rem;
+.guide-story-copy strong {
   display: block;
-  margin-bottom: 4px;
-}
-
-.guide-step strong {
-  display: block;
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #1f3a2e;
-  margin-bottom: 2px;
 }
 
-.guide-step p {
+.guide-story-copy p {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: #4b5563;
-  line-height: 1.3;
+  line-height: 1.45;
+}
+
+.guide-story-image {
+  border-radius: 16px;
+  border: 1px solid rgba(84, 103, 48, 0.12);
+  min-height: 160px;
 }
 
 /* Visual guide image area */
@@ -1335,14 +1368,14 @@
   .badge-grid,
   .chart-grid,
   .category-cards-grid,
-  .guide-steps,
+  .guide-story-grid,
   .impact-row,
   .motivation-row,
   .tab-bar {
     grid-template-columns: 1fr 1fr;
   }
 
-  .guide-steps {
+  .guide-story-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1411,7 +1444,7 @@
   .badge-grid,
   .chart-grid,
   .category-cards-grid,
-  .guide-steps,
+  .guide-story-grid,
   .impact-row,
   .motivation-row,
   .auth-toggle,
@@ -1573,25 +1606,4 @@
   margin: 0;
   font-size: 1.05rem;
   line-height: 1.35;
-}
-
-.guide-step {
-  align-content: start;
-  min-height: 180px;
-}
-
-.step-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 64px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #4f6f3f, #8baa64);
-  color: #fff;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
 }
