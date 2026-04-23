@@ -1,0 +1,4 @@
+node_modules/
+client/vite-project/node_modules/
+client/vite-project/dist/
+server/data/

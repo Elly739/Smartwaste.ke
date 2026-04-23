@@ -1,0 +1,6 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SmartWaste icon">
+  <rect width="512" height="512" rx="120" fill="#0f766e"/>
+  <rect x="76" y="76" width="360" height="360" rx="84" fill="#ecfeff"/>
+  <path d="M192 160h128l-10 48H202zm20 74h88v106c0 39-21 64-44 64s-44-25-44-64z" fill="#16a34a"/>
+  <path d="M233 247c24-12 42-5 50 14-20 2-32 14-36 35-16-9-22-27-14-49z" fill="#f7fee7"/>
+</svg>

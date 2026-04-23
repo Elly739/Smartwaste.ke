@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "scripts": {
+    "client": "npm --prefix client/vite-project run dev",
+    "server": "npm --prefix server run dev",
+    "build": "npm --prefix client/vite-project run build"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.27",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2"
+  }
+}

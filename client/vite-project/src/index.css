@@ -1,0 +1,69 @@
+:root {
+  font-family: "Segoe UI", "Trebuchet MS", "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #102a23;
+  background:
+    radial-gradient(circle at top left, rgba(22, 163, 74, 0.22), transparent 30%),
+    radial-gradient(circle at top right, rgba(13, 148, 136, 0.12), transparent 26%),
+    linear-gradient(180deg, #f6fff5 0%, #edfdf8 42%, #f7fafc 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+button,
+select,
+input {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(111, 160, 110, 0.22);
+}
+
+/* Smooth focus states for accessibility and UX */
+:focus-visible {
+  outline: 2px solid #14b8a6;
+  outline-offset: 2px;
+}
+
+button:focus-visible {
+  outline-offset: 4px;
+}
+
+/* Smooth animations for page loads */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body {
+  animation: fadeIn 400ms ease;
+}
