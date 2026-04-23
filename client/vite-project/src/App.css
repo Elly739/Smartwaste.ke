@@ -1464,6 +1464,7 @@
 .auth-hero-media {
   display: grid;
   gap: 14px;
+  align-content: start;
   border-radius: 20px;
   padding: 20px;
   background: linear-gradient(135deg, rgba(248, 255, 251, 0.98), rgba(255, 255, 255, 0.96));
@@ -1522,9 +1523,9 @@
 
 .brand-mark-card {
   display: grid;
-  grid-template-columns: 120px 1fr;
-  gap: 16px;
-  align-items: center;
+  grid-template-columns: 88px 1fr;
+  gap: 14px;
+  align-items: start;
   padding: 18px;
 }
 
@@ -1533,12 +1534,13 @@
   aspect-ratio: 1;
   object-fit: cover;
   border-radius: 20px;
+  align-self: start;
 }
 
 .hero-photo {
   display: block;
   width: 100%;
-  height: 220px;
+  height: 190px;
   object-fit: cover;
 }
 
@@ -1566,4 +1568,30 @@
   .brand-mark-card {
     grid-template-columns: 88px 1fr;
   }
+}
+.brand-mark-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.guide-step {
+  align-content: start;
+  min-height: 180px;
+}
+
+.step-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4f6f3f, #8baa64);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
