@@ -1,4 +1,5 @@
 import { all, get, run } from "./database.js";
+import { normalizeSql, isSQLite } from "./sqlHelper.js";
 
 function mapEvent(row) {
   return {
@@ -14,7 +15,7 @@ function mapEvent(row) {
 
 export async function saveDisposalEvent(event) {
   await run(
-    `INSERT INTO disposal_events (
+    normalizeSql(`INSERT INTO disposal_events (
       id,
       user_id,
       user_name,
@@ -22,7 +23,7 @@ export async function saveDisposalEvent(event) {
       waste_type,
       points_earned,
       created_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    ) VALUES (?, ?, ?, ?, ?, ?, ?)`),
     [
       event.id,
       event.userId,
@@ -38,56 +39,69 @@ export async function saveDisposalEvent(event) {
 }
 
 export async function getDisposalEvents(userId) {
+  const orderClause = isSQLite() 
+    ? "ORDER BY datetime(created_at) DESC"
+    : "ORDER BY created_at DESC";
+  
   const rows = userId
     ? await all(
-        `SELECT id, user_id, user_name, bin_id, waste_type, points_earned, created_at
+        normalizeSql(`SELECT id, user_id, user_name, bin_id, waste_type, points_earned, created_at
          FROM disposal_events
          WHERE user_id = ?
-         ORDER BY datetime(created_at) DESC`,
+         ${orderClause}`),
         [userId],
       )
     : await all(
-        `SELECT id, user_id, user_name, bin_id, waste_type, points_earned, created_at
+        normalizeSql(`SELECT id, user_id, user_name, bin_id, waste_type, points_earned, created_at
          FROM disposal_events
-         ORDER BY datetime(created_at) DESC`,
+         ${orderClause}`),
       );
 
   return rows.map(mapEvent);
 }
 
 export async function getAdminOverview() {
+  const usingSqlite = isSQLite();
+  
   const totals = await get(
-    `SELECT
+    normalizeSql(`SELECT
       COUNT(*) AS total_disposals,
       COALESCE(SUM(points_earned), 0) AS total_points
-     FROM disposal_events`,
+     FROM disposal_events`),
   );
-  const users = await get("SELECT COUNT(*) AS total_users FROM users");
+  const users = await get(normalizeSql("SELECT COUNT(*) AS total_users FROM users"));
   const wasteBreakdownRows = await all(
-    `SELECT waste_type, COUNT(*) AS count
+    normalizeSql(`SELECT waste_type, COUNT(*) AS count
      FROM disposal_events
-     GROUP BY waste_type`,
+     GROUP BY waste_type`),
   );
   const topBins = await all(
-    `SELECT bin_id, COUNT(*) AS count
+    normalizeSql(`SELECT bin_id, COUNT(*) AS count
      FROM disposal_events
      GROUP BY bin_id
      ORDER BY count DESC, bin_id ASC
-     LIMIT 5`,
+     LIMIT 5`),
   );
   const recentRows = await all(
-    `SELECT id, user_id, user_name, bin_id, waste_type, points_earned, created_at
+    normalizeSql(`SELECT id, user_id, user_name, bin_id, waste_type, points_earned, created_at
      FROM disposal_events
-     ORDER BY datetime(created_at) DESC
-     LIMIT 10`,
+     ORDER BY ${usingSqlite ? "datetime(created_at)" : "created_at"} DESC
+     LIMIT 10`),
   );
-  const weeklyRows = await all(
-    `SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count
-     FROM disposal_events
-     WHERE datetime(created_at) >= datetime('now', '-6 days')
-     GROUP BY substr(created_at, 1, 10)
-     ORDER BY day ASC`,
-  );
+  
+  const weeklyQuery = usingSqlite
+    ? `SELECT substr(created_at, 1, 10) AS day, COUNT(*) AS count
+       FROM disposal_events
+       WHERE datetime(created_at) >= datetime('now', '-6 days')
+       GROUP BY substr(created_at, 1, 10)
+       ORDER BY day ASC`
+    : `SELECT DATE(created_at) AS day, COUNT(*) AS count
+       FROM disposal_events
+       WHERE created_at >= NOW() - INTERVAL '6 days'
+       GROUP BY DATE(created_at)
+       ORDER BY day ASC`;
+  
+  const weeklyRows = await all(normalizeSql(weeklyQuery));
 
   const wasteBreakdown = {
     plastic: 0,

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { get, run } from "./database.js";
+import { normalizeSql } from "./sqlHelper.js";
 import {
   hashPassword,
   isHashedPassword,
@@ -19,7 +20,7 @@ function sanitizeUser(user) {
 export async function createUser({ name, email, password }) {
   const normalizedEmail = email.trim().toLowerCase();
   const existingUser = await get(
-    "SELECT id FROM users WHERE email = ?",
+    normalizeSql("SELECT id FROM users WHERE email = ?"),
     [normalizedEmail],
   );
 
@@ -37,8 +38,8 @@ export async function createUser({ name, email, password }) {
   };
 
   await run(
-    `INSERT INTO users (id, name, email, password, role, created_at)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    normalizeSql(`INSERT INTO users (id, name, email, password, role, created_at)
+     VALUES (?, ?, ?, ?, ?, ?)`),
     [user.id, user.name, user.email, user.password, user.role, user.createdAt],
   );
 
@@ -54,9 +55,9 @@ export async function createUser({ name, email, password }) {
 export async function authenticateUser({ email, password }) {
   const normalizedEmail = email.trim().toLowerCase();
   const user = await get(
-    `SELECT id, name, email, role, created_at, password
+    normalizeSql(`SELECT id, name, email, role, created_at, password
      FROM users
-     WHERE email = ?`,
+     WHERE email = ?`),
     [normalizedEmail],
   );
 
@@ -66,7 +67,7 @@ export async function authenticateUser({ email, password }) {
 
   if (!isHashedPassword(user.password)) {
     await run(
-      "UPDATE users SET password = ? WHERE id = ?",
+      normalizeSql("UPDATE users SET password = ? WHERE id = ?"),
       [hashPassword(password), user.id],
     );
   }
@@ -78,8 +79,8 @@ export async function createSession(userId) {
   const token = randomUUID();
 
   await run(
-    `INSERT INTO sessions (token, user_id, created_at)
-     VALUES (?, ?, ?)`,
+    normalizeSql(`INSERT INTO sessions (token, user_id, created_at)
+     VALUES (?, ?, ?)`),
     [token, userId, new Date().toISOString()],
   );
 
@@ -88,10 +89,10 @@ export async function createSession(userId) {
 
 export async function getUserBySessionToken(token) {
   const user = await get(
-    `SELECT users.id, users.name, users.email, users.role, users.created_at
+    normalizeSql(`SELECT users.id, users.name, users.email, users.role, users.created_at
      FROM sessions
      JOIN users ON users.id = sessions.user_id
-     WHERE sessions.token = ?`,
+     WHERE sessions.token = ?`),
     [token],
   );
 
@@ -100,9 +101,9 @@ export async function getUserBySessionToken(token) {
 
 export async function getUserById(userId) {
   const user = await get(
-    `SELECT id, name, email, role, created_at
+    normalizeSql(`SELECT id, name, email, role, created_at
      FROM users
-     WHERE id = ?`,
+     WHERE id = ?`),
     [userId],
   );
 

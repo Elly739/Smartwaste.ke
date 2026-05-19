@@ -1,16 +1,18 @@
 import app from "./app.js";
-import { initializeDatabase } from "./data/database.js";
+import { initializeDatabase, closeDatabase } from "./data/database.js";
 
 const PORT = process.env.PORT || 4000;
 const NODE_ENV = process.env.NODE_ENV || "development";
 const LOG_LEVEL = process.env.LOG_LEVEL || "info";
+
+let server;
 
 try {
   console.log(`[${new Date().toISOString()}] Initializing SmartWaste database...`);
   await initializeDatabase();
   console.log(`[${new Date().toISOString()}] Database initialized successfully`);
 
-  app.listen(PORT, () => {
+  server = app.listen(PORT, () => {
     console.log(`[${new Date().toISOString()}] SmartWaste server running on http://localhost:${PORT}`);
     console.log(`[${new Date().toISOString()}] Environment: ${NODE_ENV}`);
     console.log(`[${new Date().toISOString()}] Log Level: ${LOG_LEVEL}`);
@@ -19,3 +21,31 @@ try {
   console.error(`[${new Date().toISOString()}] Failed to start SmartWaste server:`, error);
   process.exit(1);
 }
+
+// Graceful shutdown handlers
+async function gracefulShutdown(signal) {
+  console.log(`[${new Date().toISOString()}] Received ${signal}, shutting down gracefully...`);
+  
+  if (server) {
+    server.close(async () => {
+      console.log(`[${new Date().toISOString()}] HTTP server closed`);
+      try {
+        await closeDatabase();
+        console.log(`[${new Date().toISOString()}] Database connections closed`);
+        process.exit(0);
+      } catch (error) {
+        console.error(`[${new Date().toISOString()}] Error closing database:`, error);
+        process.exit(1);
+      }
+    });
+
+    // Force shutdown after 10 seconds
+    setTimeout(() => {
+      console.error(`[${new Date().toISOString()}] Forced shutdown - graceful shutdown took too long`);
+      process.exit(1);
+    }, 10000);
+  }
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));

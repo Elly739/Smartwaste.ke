@@ -12,12 +12,20 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=${PORT:-4000}
-      - DATABASE_URL=${DATABASE_URL:-postgres://user:password@db:5432/smartwaste}
+      # Database Configuration for Production
+      # Option 1: Neon PostgreSQL (Recommended)
+      # Set DATABASE_URL to your Neon connection string
+      - DATABASE_URL=${DATABASE_URL}
+      # Option 2: Self-hosted PostgreSQL (use docker-compose.prod.yml database service)
+      # - DATABASE_URL=postgresql://${DB_USER:-smartwaste}:${DB_PASSWORD}@db:5432/smartwaste
       - CORS_ORIGIN=${CORS_ORIGIN:-https://smartwaste.ke}
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - ADMIN_NAME=${ADMIN_NAME:-SmartWaste Admin}
       - LOG_LEVEL=info
+      - DATABASE_POOL_SIZE=${DATABASE_POOL_SIZE:-20}
+      - DATABASE_IDLE_TIMEOUT=60000
+      - DATABASE_CONNECTION_TIMEOUT=5000
     volumes:
       - smartwaste-data:/app/data
     networks:

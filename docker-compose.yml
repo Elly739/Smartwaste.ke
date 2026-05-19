@@ -12,7 +12,12 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4000
+      # Database Configuration
+      # Option 1: SQLite (default for development)
+      - USE_SQLITE=true
       - DATABASE_PATH=/app/data/smartwaste.sqlite
+      # Option 2: PostgreSQL (Neon) - uncomment and set your DATABASE_URL
+      # - DATABASE_URL=postgresql://user:password@neon.tech:5432/database?sslmode=require
       - CORS_ORIGIN=http://localhost:3000
       - ADMIN_EMAIL=${ADMIN_EMAIL:-iamellyokello@gmail.com}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD:-AGXR4X45}
