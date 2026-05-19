@@ -1,6 +1,7 @@
 {
   "private": true,
   "scripts": {
+    "dev": "npm run server & npm run client",
     "client": "npm --prefix client/vite-project run dev",
     "server": "npm --prefix server run dev",
     "build": "npm --prefix client/vite-project run build"
