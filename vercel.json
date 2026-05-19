@@ -1,0 +1,25 @@
+{
+  "buildCommand": "cd client/vite-project && npm run build",
+  "outputDirectory": "client/vite-project/dist",
+  "framework": "vite",
+  "env": {
+    "VITE_API_BASE_URL": "@vite_api_base_url"
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "${VITE_API_BACKEND_URL}/api/:path*"
+    },
+    {
+      "source": "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "regions": ["sfo1"],
+  "functions": {
+    "api/health.js": {
+      "memory": 128,
+      "maxDuration": 10
+    }
+  }
+}
