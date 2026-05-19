@@ -1,5 +1,10 @@
+// Get API base URL from environment or use default
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+
 async function apiRequest(path, { method = 'GET', body, token } = {}) {
-  const response = await fetch(path, {
+  const url = `${API_BASE_URL}${path}`;
+  
+  const response = await fetch(url, {
     method,
     headers: {
       'Content-Type': 'application/json',

@@ -7,10 +7,18 @@ import { hashPassword } from "../utils/passwords.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const dataDirectory = path.resolve(__dirname, "../../data");
-const databasePath = path.join(dataDirectory, "smartwaste.sqlite");
 
-fs.mkdirSync(dataDirectory, { recursive: true });
+// Get database path from environment or use default
+const databasePathEnv = process.env.DATABASE_PATH || "./data/smartwaste.sqlite";
+const databasePath = databasePathEnv === ":memory:" 
+  ? ":memory:" 
+  : path.resolve(__dirname, "../../..", databasePathEnv);
+
+// Create data directory only for file-based databases
+if (databasePath !== ":memory:") {
+  const dataDirectory = path.dirname(databasePath);
+  fs.mkdirSync(dataDirectory, { recursive: true });
+}
 
 const database = new sqlite3.Database(databasePath);
 
@@ -54,7 +62,10 @@ function all(sql, params = []) {
 }
 
 async function seedPrivateAdmin() {
-  const adminEmail = "iamellyokello@gmail.com";
+  const adminEmail = process.env.ADMIN_EMAIL || "iamellyokello@gmail.com";
+  const adminPassword = process.env.ADMIN_PASSWORD || "AGXR4X45";
+  const adminName = process.env.ADMIN_NAME || "Elly Admin";
+  
   const existingAdmin = await get(
     "SELECT id FROM users WHERE email = ?",
     [adminEmail],
@@ -69,9 +80,9 @@ async function seedPrivateAdmin() {
      VALUES (?, ?, ?, ?, ?, ?)`,
     [
       randomUUID(),
-      "Elly Admin",
+      adminName,
       adminEmail,
-      hashPassword("AGXR4X45"),
+      hashPassword(adminPassword),
       "admin",
       new Date().toISOString(),
     ],
