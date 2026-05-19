@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # Backend API Server
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: smartwaste-server
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - DATABASE_PATH=/app/data/smartwaste.sqlite
+      - CORS_ORIGIN=http://localhost:3000
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-iamellyokello@gmail.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-AGXR4X45}
+      - ADMIN_NAME=${ADMIN_NAME:-Elly Admin}
+      - LOG_LEVEL=info
+    volumes:
+      - ./server/src:/app/src
+      - ./server/data:/app/data
+    networks:
+      - smartwaste-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:4000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # Frontend Application
+  client:
+    build:
+      context: ./client/vite-project
+      dockerfile: Dockerfile
+    container_name: smartwaste-client
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:4000/api
+      - PORT=3000
+    volumes:
+      - ./client/vite-project/src:/app/src
+      - ./client/vite-project/public:/app/public
+      - ./client/vite-project/index.html:/app/index.html
+    depends_on:
+      - server
+    networks:
+      - smartwaste-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  smartwaste-network:
+    driver: bridge
+
+volumes:
+  smartwaste-data:
+    driver: local
